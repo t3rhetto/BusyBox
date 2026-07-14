@@ -20,7 +20,7 @@ class WindowManager: ObservableObject {
         
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 800, height: 600),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -30,13 +30,8 @@ class WindowManager: ObservableObject {
         window.center()
         window.makeKeyAndOrderFront(nil)
         
-        // 标题栏透明，使用全尺寸内容视图让背景延伸到标题栏下方
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
-        window.styleMask.insert(.fullSizeContentView)
-        window.isOpaque = false
-        // 窗口背景设为终端深色，避免红绿灯区域透明
-        window.backgroundColor = NSColor(red: 0.08, green: 0.08, blue: 0.10, alpha: 1.0)
+        // 配置液态玻璃效果
+        configureGlassEffect(for: window)
         
         // 保存 state 强引用
         terminalStates[windowID] = terminalState
@@ -55,6 +50,24 @@ class WindowManager: ObservableObject {
         windows.append(window)
     }
     
+    /// 为窗口配置液态玻璃效果
+    private func configureGlassEffect(for window: NSWindow) {
+        // 标题栏透明
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        
+        // 窗口背景透明（让毛玻璃效果可见）
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        
+        // 添加液态玻璃背景
+        if let contentView = window.contentView {
+            let glassView = TerminalGlassView(frame: contentView.bounds)
+            glassView.autoresizingMask = [.width, .height]
+            contentView.addSubview(glassView, positioned: .below, relativeTo: nil)
+        }
+    }
+    
     private func removeWindow(_ window: NSWindow, windowID: UUID) {
         windows.removeAll { $0 === window }
         terminalStates.removeValue(forKey: windowID)
@@ -66,5 +79,36 @@ class WindowManager: ObservableObject {
         windows.removeAll()
         terminalStates.removeAll()
         windowCount = 0
+    }
+}
+
+// MARK: - 终端液态玻璃背景视图
+class TerminalGlassView: NSView {
+    
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+    }
+    
+    private func setupView() {
+        // 毛玻璃效果（深色主题）
+        let visualEffect = NSVisualEffectView(frame: bounds)
+        visualEffect.autoresizingMask = [.width, .height]
+        visualEffect.material = .hudWindow
+        visualEffect.blendingMode = .behindWindow
+        visualEffect.state = .active
+        // 强制深色外观
+        visualEffect.appearance = NSAppearance(named: .darkAqua)
+        addSubview(visualEffect)
+    }
+    
+    override func layout() {
+        super.layout()
+        subviews.forEach { $0.frame = bounds }
     }
 }

@@ -6,9 +6,6 @@ struct ContentView: View {
     
     var body: some View {
         HomeView()
-            .background {
-                GlassBackground()
-            }
     }
 }
 
@@ -74,7 +71,7 @@ struct HomeView: View {
     }
 }
 
-// MARK: - 工具卡片
+// MARK: - 工具卡片（液态玻璃风格）
 struct ToolCard: View {
     let icon: String
     let title: String
@@ -89,7 +86,11 @@ struct ToolCard: View {
                 // 图标
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(tint.opacity(0.15))
+                        .fill(.ultraThinMaterial)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(tint.opacity(0.3), lineWidth: 1)
+                        }
                         .frame(width: 72, height: 72)
                     
                     Image(systemName: icon)
@@ -112,66 +113,22 @@ struct ToolCard: View {
             .padding(28)
             .frame(width: 220)
             .background {
-                RoundedRectangle(cornerRadius: 16)
+                // 液态玻璃卡片背景
+                RoundedRectangle(cornerRadius: 20)
                     .fill(.ultraThinMaterial)
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(tint.opacity(isHovered ? 0.5 : 0.1), lineWidth: 1)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.white.opacity(0.2), lineWidth: 1)
+                    }
             }
             .shadow(
-                color: tint.opacity(isHovered ? 0.2 : 0.08),
-                radius: isHovered ? 16 : 8,
-                y: isHovered ? 8 : 4
+                color: .black.opacity(isHovered ? 0.15 : 0.08),
+                radius: isHovered ? 20 : 10,
+                y: isHovered ? 10 : 5
             )
-            .scaleEffect(isHovered ? 1.04 : 1.0)
+            .scaleEffect(isHovered ? 1.05 : 1.0)
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - 液态玻璃背景
-struct GlassBackground: View {
-    var body: some View {
-        ZStack {
-            // 底层：系统毛玻璃效果
-            VisualEffectBlur(
-                material: .underWindowBackground,
-                blendingMode: .behindWindow
-            )
-            
-            // 叠加层：微妙渐变模拟 Tahoe 折射感
-            LinearGradient(
-                colors: [
-                    .blue.opacity(0.03),
-                    .purple.opacity(0.02),
-                    .cyan.opacity(0.03),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
-        .ignoresSafeArea()
-    }
-}
-
-// MARK: - NSVisualEffectView 包装器
-struct VisualEffectBlur: NSViewRepresentable {
-    let material: NSVisualEffectView.Material
-    let blendingMode: NSVisualEffectView.BlendingMode
-    
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = material
-        view.blendingMode = blendingMode
-        view.state = .active
-        view.wantsLayer = true
-        return view
-    }
-    
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
-        nsView.material = material
-        nsView.blendingMode = blendingMode
     }
 }
 
