@@ -22,8 +22,8 @@ struct BusyBoxApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .commands {
-            CommandGroup(after: .newItem) {
-                Button("新建假终端窗口") {
+            CommandGroup(replacing: .newItem) {
+                Button("New Terminal") {
                     windowManager.openNewTerminal()
                 }
                 .keyboardShortcut("n", modifiers: .command)
