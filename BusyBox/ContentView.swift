@@ -23,9 +23,8 @@ struct HomeView: View {
     
     var body: some View {
         ZStack {
-            // 背景色
-            Color(red: 0.08, green: 0.08, blue: 0.10)
-                .ignoresSafeArea()
+            // 背景
+            BackgroundView()
             
             VStack(spacing: 40) {
                 // 标题区
@@ -36,7 +35,7 @@ struct HomeView: View {
                     
                     Text("假装很忙的工具箱")
                         .font(.title3)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.7))
                 }
                 .padding(.top, 60)
                 
@@ -85,23 +84,23 @@ struct HomeView: View {
                         showSettings = true
                     } label: {
                         Image(systemName: "gearshape.fill")
-                            .font(.system(size: 16))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 36, height: 36)
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white.opacity(0.6))
+                            .frame(width: 32, height: 32)
                             .background(.ultraThinMaterial)
                             .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
-                    .help("Settings")
+                    .help("Settings (⌘,)")
                     
                     // 关于按钮
                     Button {
                         showAbout = true
                     } label: {
                         Image(systemName: "info.circle.fill")
-                            .font(.system(size: 16))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 36, height: 36)
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white.opacity(0.6))
+                            .frame(width: 32, height: 32)
                             .background(.ultraThinMaterial)
                             .clipShape(Circle())
                     }
@@ -124,7 +123,21 @@ struct HomeView: View {
     }
 }
 
-// MARK: - 工具卡片（液态玻璃风格）
+// MARK: - 背景视图
+struct BackgroundView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        view.appearance = NSAppearance(named: .darkAqua)
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
+// MARK: - 工具卡片
 struct ToolCard: View {
     let icon: String
     let title: String
@@ -160,23 +173,22 @@ struct ToolCard: View {
                 // 描述
                 Text(description)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .lineSpacing(2)
             }
             .padding(28)
             .frame(width: 220)
             .background {
-                // 液态玻璃卡片背景
                 RoundedRectangle(cornerRadius: 20)
                     .fill(.ultraThinMaterial)
                     .overlay {
                         RoundedRectangle(cornerRadius: 20)
-                            .stroke(.white.opacity(0.2), lineWidth: 1)
+                            .stroke(.white.opacity(0.15), lineWidth: 1)
                     }
             }
             .shadow(
-                color: .black.opacity(isHovered ? 0.15 : 0.08),
+                color: .black.opacity(isHovered ? 0.2 : 0.1),
                 radius: isHovered ? 20 : 10,
                 y: isHovered ? 10 : 5
             )

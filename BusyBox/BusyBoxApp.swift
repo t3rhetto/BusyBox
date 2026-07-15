@@ -6,7 +6,6 @@ struct BusyBoxApp: App {
     @StateObject private var windowManager = WindowManager()
     
     var body: some Scene {
-        // 主窗口
         WindowGroup {
             ContentView()
                 .environmentObject(windowManager)
@@ -34,16 +33,13 @@ struct BusyBoxApp: App {
 // MARK: - App Delegate
 class AppDelegate: NSObject, NSApplicationDelegate {
     
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // 应用启动完成
-    }
+    func applicationDidFinishLaunching(_ notification: Notification) {}
     
-    /// 配置窗口
     func configureWindow(_ window: NSWindow) {
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
         window.styleMask.insert(.fullSizeContentView)
         window.isOpaque = false
-        window.backgroundColor = NSColor(red: 0.08, green: 0.08, blue: 0.10, alpha: 1.0)
+        window.backgroundColor = .clear
     }
 }
