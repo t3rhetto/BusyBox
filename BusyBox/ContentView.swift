@@ -22,82 +22,97 @@ struct HomeView: View {
     ]
     
     var body: some View {
-        VStack(spacing: 40) {
-            // 标题区
-            VStack(spacing: 12) {
-                Text("BusyBox")
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                
-                Text("假装很忙的工具箱")
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.top, 60)
+        ZStack {
+            // 背景色
+            Color(red: 0.08, green: 0.08, blue: 0.10)
+                .ignoresSafeArea()
             
-            // 工具卡片网格
-            LazyVGrid(columns: columns, spacing: 24) {
-                ToolCard(
-                    icon: "terminal.fill",
-                    title: "假终端",
-                    description: "假装在写代码\n让老板觉得你很忙",
-                    tint: .green,
-                    isHovered: hoveredCard == "terminal"
-                ) {
-                    windowManager.openNewTerminal()
+            VStack(spacing: 40) {
+                // 标题区
+                VStack(spacing: 12) {
+                    Text("BusyBox")
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                    
+                    Text("假装很忙的工具箱")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
                 }
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        hoveredCard = hovering ? "terminal" : nil
+                .padding(.top, 60)
+                
+                // 工具卡片网格
+                LazyVGrid(columns: columns, spacing: 24) {
+                    ToolCard(
+                        icon: "terminal.fill",
+                        title: "假终端",
+                        description: "假装在写代码\n让老板觉得你很忙",
+                        tint: .green,
+                        isHovered: hoveredCard == "terminal"
+                    ) {
+                        windowManager.openNewTerminal()
+                    }
+                    .onHover { hovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            hoveredCard = hovering ? "terminal" : nil
+                        }
+                    }
+                    
+                    ToolCard(
+                        icon: "hammer.fill",
+                        title: "更多工具",
+                        description: "更多摸鱼工具\n正在开发中...",
+                        tint: .orange,
+                        isHovered: hoveredCard == "more"
+                    ) {
+                        // TODO: 后续添加工具列表
+                    }
+                    .onHover { hovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            hoveredCard = hovering ? "more" : nil
+                        }
                     }
                 }
                 
-                ToolCard(
-                    icon: "gearshape.fill",
-                    title: "设置",
-                    description: "自定义终端外观\n调整输出速度等",
-                    tint: .blue,
-                    isHovered: hoveredCard == "settings"
-                ) {
-                    showSettings = true
-                }
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        hoveredCard = hovering ? "settings" : nil
-                    }
-                }
-                
-                ToolCard(
-                    icon: "info.circle.fill",
-                    title: "关于",
-                    description: "项目信息\n开发者: T3Rhetto",
-                    tint: .purple,
-                    isHovered: hoveredCard == "about"
-                ) {
-                    showAbout = true
-                }
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        hoveredCard = hovering ? "about" : nil
-                    }
-                }
-                
-                ToolCard(
-                    icon: "hammer.fill",
-                    title: "更多工具",
-                    description: "更多摸鱼工具\n正在开发中...",
-                    tint: .orange,
-                    isHovered: hoveredCard == "more"
-                ) {
-                    // TODO: 后续添加工具列表
-                }
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        hoveredCard = hovering ? "more" : nil
-                    }
-                }
+                Spacer()
             }
             
-            Spacer()
+            // 底部工具栏
+            VStack {
+                Spacer()
+                HStack {
+                    // 设置按钮
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 36, height: 36)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .help("Settings")
+                    
+                    // 关于按钮
+                    Button {
+                        showAbout = true
+                    } label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 36, height: 36)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .help("About")
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $showSettings) {
@@ -140,6 +155,7 @@ struct ToolCard: View {
                 Text(title)
                     .font(.title2)
                     .fontWeight(.semibold)
+                    .foregroundStyle(.white)
                 
                 // 描述
                 Text(description)
