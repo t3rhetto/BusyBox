@@ -4,6 +4,8 @@ import SwiftUI
 struct BusyBoxApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var windowManager = WindowManager()
+    @State private var showSettings = false
+    @State private var showAbout = false
     
     var body: some Scene {
         // 主窗口
@@ -19,6 +21,12 @@ struct BusyBoxApp: App {
                         }
                     }
                 }
+                .sheet(isPresented: $showSettings) {
+                    SettingsView()
+                }
+                .sheet(isPresented: $showAbout) {
+                    AboutView()
+                }
         }
         .windowStyle(.hiddenTitleBar)
         .commands {
@@ -27,6 +35,19 @@ struct BusyBoxApp: App {
                     windowManager.openNewTerminal()
                 }
                 .keyboardShortcut("n", modifiers: .command)
+            }
+            
+            CommandGroup(after: .appSettings) {
+                Button("Settings...") {
+                    showSettings = true
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+            
+            CommandGroup(replacing: .appInfo) {
+                Button("About BusyBox") {
+                    showAbout = true
+                }
             }
         }
     }

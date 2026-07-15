@@ -13,6 +13,8 @@ struct ContentView: View {
 struct HomeView: View {
     @EnvironmentObject var windowManager: WindowManager
     @State private var hoveredCard: String?
+    @State private var showSettings = false
+    @State private var showAbout = false
     
     private let columns = [
         GridItem(.fixed(220), spacing: 24),
@@ -50,6 +52,36 @@ struct HomeView: View {
                 }
                 
                 ToolCard(
+                    icon: "gearshape.fill",
+                    title: "设置",
+                    description: "自定义终端外观\n调整输出速度等",
+                    tint: .blue,
+                    isHovered: hoveredCard == "settings"
+                ) {
+                    showSettings = true
+                }
+                .onHover { hovering in
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        hoveredCard = hovering ? "settings" : nil
+                    }
+                }
+                
+                ToolCard(
+                    icon: "info.circle.fill",
+                    title: "关于",
+                    description: "项目信息\n开发者: T3Rhetto",
+                    tint: .purple,
+                    isHovered: hoveredCard == "about"
+                ) {
+                    showAbout = true
+                }
+                .onHover { hovering in
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        hoveredCard = hovering ? "about" : nil
+                    }
+                }
+                
+                ToolCard(
                     icon: "hammer.fill",
                     title: "更多工具",
                     description: "更多摸鱼工具\n正在开发中...",
@@ -68,6 +100,12 @@ struct HomeView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+        }
+        .sheet(isPresented: $showAbout) {
+            AboutView()
+        }
     }
 }
 
